@@ -1,0 +1,80 @@
+{
+  "test": "Test",
+  "signUp": {
+    "choose_nickname": "Choose a nickname",
+    "continue": "Continue",
+    "role_title" : "What's your primary role?",
+    "button_options" : {
+      "dao_manager" : "DAO Manager",
+      "dao_contributor": "DAO Contributor",
+      "user": "DAO User Only",
+      "note": "* You can change this later in My Profile'."
+    }
+  },
+  "sidebar": {
+    "myOrganizations": "Organizations",
+    "my_task_board" : "My Tasks",
+    "inbox" : "Inbox",
+    "bookmarks" : "Bookmarks",
+    "profiles" : "Profiles",
+    "disputes" : "Disputes"
+  },
+  "myOrganizations" : {
+    "title": "Explore DAOs",
+    "filterBy" : "Filter by",
+    "admin" : "Admin",
+    "member" : "Member",
+    "noItems" : "No items found",
+    "create" : "Create DAO",
+    "yourOrganizations" : "Your DAOs",
+    "publicOrganizations" : "All DAOs",
+    "table" : {
+      "organization" : "Organization",
+      "contributors" : "Contributors",
+      "moderators" : "Moderators",
+      "actions" : "Actions",
+      "requestJoin" : "Request to join",
+      "seeDetails" : "See details",
+      "tableInfo" : "You must be a member to see its details."
+    },
+    "create_organization" : {
+      "title" : "Create DAO",
+      "name" : "Name",
+      "description" : "Description",
+      "create" : "Create",
+      "cancel" : "Cancel",
+      "image" : "Image",
+      "pickImage" : "Pick image",
+      "visit" : "Visit DAO",
+      "close" : "Close"
+    }
+  },
+  "dashboard" : {
+    "taskboardTitle" : "Task Board",
+    "task" : {
+      "actionButtonActive" : "Active",
+      "actionButtonFinished" : "Finished",
+      "actionButtonProcess" : "Process",
+      "actionButtonPaused" : "Paused"
+    },
+    "createTask" : {
+      "modalTitle" : "Create Task",
+      "title" : "Task title",
+      "description" : "Task description",
+      "create" : "Create task",
+      "value" : "Task value (max 10)",
+      "cancel" : "Cancel",
+      "dueDate" : "Due date",
+      "createdSuccessfully" : "Task created successfully",
+      "close" : "Close",
+      "category" : "Category",
+      "error" : {
+        "fillAllFields" : "Please fill all fields",
+        "errorCreatingTask" : "Error creating organization, please try again later"
+      }
+    },
+    "detailTask" : {
+      "activity": "Activity"
+    }
+  }
+}

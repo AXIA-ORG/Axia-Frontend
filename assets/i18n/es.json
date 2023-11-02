@@ -1,0 +1,80 @@
+{
+  "test": "Test",
+  "signUp": {
+    "choose_nickname": "Selecciona un nombre de usuario",
+    "continue": "Continúa",
+    "role_title" : "¿Cuál es tu rol principal?",
+    "button_options" : {
+      "dao_manager" : "Admin DAO",
+      "dao_contributor": "Contribuidor",
+      "user": "Usuario",
+      "note": "* Puedes cambiarlo luego en tu perfil"
+    }
+  },
+  "sidebar": {
+    "myOrganizations": "Organizaciones",
+    "my_task_board" : "Mis tareas",
+    "inbox" : "Bandeja de entrada",
+    "bookmarks" : "Marcadores",
+    "profiles" : "Perfiles",
+    "disputes" : "Disputas"
+  },
+  "myOrganizations" : {
+    "title": "Explora DAOs",
+    "filterBy" : "Filtrar por",
+    "admin" : "Administrador",
+    "member" : "Miembro",
+    "noItems": "No tienes DAOs para mostrar",
+    "create": "Crear DAO",
+    "yourOrganizations" : "Tus DAOs",
+    "publicOrganizations" : "Todas las DAOs",
+    "table" : {
+      "organization" : "Organización",
+      "contributors" : "Contribuidores",
+      "moderators" : "Moderadores",
+      "actions" : "Acciones",
+      "requestJoin" : "Solicitar unirse",
+      "seeDetails" : "Ver detalles",
+      "tableInfo" : "Debes ser miembro para ver los detalles."
+    },
+    "create_organization" : {
+      "title" : "Crear DAO",
+      "name" : "Nombre",
+      "description" : "Descripción",
+      "create" : "Crear",
+      "cancel" : "Cancelar",
+      "image" : "Imagen",
+      "pickImage" : "Seleccionar imagen",
+      "visit" : "Visitar DAO",
+      "close" : "Cerrar"
+    }
+  },
+  "dashboard" : {
+    "taskboardTitle" : "Tablero de tareas",
+    "task" : {
+      "actionButtonActive" : "Activa",
+      "actionButtonFinished" : "Finalizada",
+      "actionButtonProcess" : "En proceso",
+      "actionButtonPaused" : "Pausada"
+    },
+    "createTask" : {
+      "modalTitle" : "Crear tarea",
+      "title" : "Título de la tarea",
+      "description" : "Descripción de la tarea",
+      "create" : "Crear tarea",
+      "value" : "Valor de la tarea (max 10)",
+      "cancel" : "Cancelar",
+      "dueDate" : "Fecha de cumplimiento",
+      "createdSuccessfully" : "Tarea creada exitosamente",
+      "close" : "Cerrar",
+      "category" : "Categoría",
+      "error" : {
+        "fillAllFields" : "Por favor, rellena todos los campos",
+        "errorCreatingTask" : "Error al crear la tarea, intenta de nuevo más tarde"
+      }
+    },
+    "detailTask" : {
+      "activity": "Actividad"
+    }
+  }
+}
