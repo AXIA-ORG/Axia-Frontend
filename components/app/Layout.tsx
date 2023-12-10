@@ -59,14 +59,31 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const [showOrganizations, setShowOrganizations] = useState(true);
   const [showDisputes, setShowDisputes] = useState(true);
   const [orgs, setOrgs] = useState<Organization[]>([]);
-  const [bgColor1, setBgColor1] = useState(useColorModeValue("white", "gray.900"));
-  const [bgColor2, setBgColor2] = useState(useColorModeValue("gray.200", "gray.700"));
+  const [bgColor1, setBgColor1] = useState(
+    useColorModeValue("white", "gray.900")
+  );
+  const [bgColor2, setBgColor2] = useState(
+    useColorModeValue("gray.200", "gray.700")
+  );
+  const { colorMode } = useColorMode();
+
   useEffect(() => {
     if (!data) return;
     setOrgs(data.organizationOfUser);
   }, [data]);
+  useEffect(() => {
+    getBGColor();
+  }, [colorMode]);
 
-  
+  const getBGColor = () => {
+    if (colorMode === "light") {
+      setBgColor1("white");
+      setBgColor2("gray.200");
+    } else {
+      setBgColor1("gray.900");
+      setBgColor2("gray.700");
+    }
+  };
 
   return (
     <Box
@@ -230,8 +247,12 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const [imageSrc, setImageSrc] = useState("/images/eng_flag.png");
   const { loading, error, data, refetch } = useQuery(GET_USER);
   const [userInformation, setUserInformation] = useState<any>(null);
-  const [bgColor1, setBgColor1] = useState(useColorModeValue("white", "gray.900"));
-  const [bgColor2, setBgColor2] = useState(useColorModeValue("gray.200", "gray.700"));
+  const [bgColor1, setBgColor1] = useState(
+    useColorModeValue("white", "gray.900")
+  );
+  const [bgColor2, setBgColor2] = useState(
+    useColorModeValue("gray.200", "gray.700")
+  );
   useEffect(() => {
     setImageSrc(
       i18n.language === "en" ? "/images/eng_flag.png" : "/images/esp_flag.png"
@@ -239,11 +260,22 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   }, [i18n.language]);
 
   useEffect(() => {
-
     if (!data) return;
     setUserInformation(data.user);
   }, [data]);
+  useEffect(() => {
+    getBGColor();
+  }, [colorMode]);
 
+  const getBGColor = () => {
+    if (colorMode === "light") {
+      setBgColor1("white");
+      setBgColor2("gray.200");
+    } else {
+      setBgColor1("gray.900");
+      setBgColor2("gray.700");
+    }
+  };
   const changeLanguage = async (lng: string) => {
     await i18n.changeLanguage(lng);
   };
@@ -276,73 +308,73 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         Logo
       </Text>
 
-      {userInformation && <HStack spacing={{ base: "0", md: "6" }}>
-        <IconButton
-          size="lg"
-          variant="ghost"
-          aria-label="open menu"
-          icon={<FiBell />}
-        />
-        <Button onClick={toggleColorMode}>
-          {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-        </Button>
-        <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton
-              py={2}
-              transition="all 0.3s"
-              _focus={{ boxShadow: "none" }}
-            >
-              <HStack>
-                <Avatar
-                  size={"sm"}
-                  src={
-                    "images/standarAvatar.png"
-                  }
+      {userInformation && (
+        <HStack spacing={{ base: "0", md: "6" }}>
+          <IconButton
+            size="lg"
+            variant="ghost"
+            aria-label="open menu"
+            icon={<FiBell />}
+          />
+          <Button onClick={toggleColorMode}>
+            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+          </Button>
+          <Flex alignItems={"center"}>
+            <Menu>
+              <MenuButton
+                py={2}
+                transition="all 0.3s"
+                _focus={{ boxShadow: "none" }}
+              >
+                <HStack>
+                  <Avatar size={"sm"} src={"images/standarAvatar.png"} />
+                  <VStack
+                    display={{ base: "none", md: "flex" }}
+                    alignItems="flex-start"
+                    spacing="1px"
+                    ml="2"
+                  >
+                    {userInformation && (
+                      <Text fontSize="sm">{userInformation.nickname}</Text>
+                    )}
+                    <Text fontSize="xs" color="gray.600">
+                      {userInformation.roles[0]}
+                    </Text>
+                  </VStack>
+                  <Box display={{ base: "none", md: "flex" }}>
+                    <FiChevronDown />
+                  </Box>
+                </HStack>
+              </MenuButton>
+              <MenuList bg={bgColor1} borderColor={bgColor2}>
+                <MenuItem>Profile</MenuItem>
+                <MenuItem>Settings</MenuItem>
+                <MenuDivider />
+                <MenuItem>Sign out</MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
+          <Flex alignItems={"center"}>
+            <Menu>
+              <MenuButton as={Button}>
+                <Image
+                  alt="Flag image"
+                  src={imageSrc}
+                  boxSize="30px" // Ajusta el tamaño según prefieras
                 />
-                <VStack
-                  display={{ base: "none", md: "flex" }}
-                  alignItems="flex-start"
-                  spacing="1px"
-                  ml="2"
-                >
-                  {userInformation && <Text fontSize="sm">{userInformation.nickname}</Text>}
-                  <Text fontSize="xs" color="gray.600">
-                    {userInformation.roles[0]}
-                  </Text>
-                </VStack>
-                <Box display={{ base: "none", md: "flex" }}>
-                  <FiChevronDown />
-                </Box>
-              </HStack>
-            </MenuButton>
-            <MenuList
-              bg={bgColor1}
-              borderColor={bgColor2}
-            >
-              <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
-        <Flex alignItems={"center"}>
-          <Menu>
-            <MenuButton as={Button}>
-              <Image
-                alt="Flag image"
-                src={imageSrc}
-                boxSize="30px" // Ajusta el tamaño según prefieras
-              />
-            </MenuButton>
-            <MenuList>
-              <MenuItem onClick={() => changeLanguage("en")}>English</MenuItem>
-              <MenuItem onClick={() => changeLanguage("es")}>Español</MenuItem>
-            </MenuList>
-          </Menu>
-        </Flex>
-      </HStack>}
+              </MenuButton>
+              <MenuList>
+                <MenuItem onClick={() => changeLanguage("en")}>
+                  English
+                </MenuItem>
+                <MenuItem onClick={() => changeLanguage("es")}>
+                  Español
+                </MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
+        </HStack>
+      )}
     </Flex>
   );
 };
