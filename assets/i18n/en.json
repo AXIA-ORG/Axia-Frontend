@@ -9,7 +9,8 @@
       "dao_contributor": "DAO Contributor",
       "user": "DAO User Only",
       "note": "* You can change this later in My Profile'."
-    }
+    },
+    "sign_message" : "Sign message with wallet to verify your identity"
   },
   "sidebar": {
     "myOrganizations": "Organizations",

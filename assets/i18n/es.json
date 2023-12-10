@@ -9,7 +9,8 @@
       "dao_contributor": "Contribuidor",
       "user": "Usuario",
       "note": "* Puedes cambiarlo luego en tu perfil"
-    }
+    },
+    "sign_message" : "Firma el mensaje con tu billetera para verificar tu identidad"
   },
   "sidebar": {
     "myOrganizations": "Organizaciones",

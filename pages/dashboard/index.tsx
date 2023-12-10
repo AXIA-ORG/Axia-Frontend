@@ -1,9 +1,10 @@
 import React, { use, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useAccount } from "wagmi";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useToast } from "@chakra-ui/react";
+import { signMessage } from "@wagmi/core";
 
 import { CREATE_USER } from "../../graphql/createUser.graphql";
 import { UPDATE_USER } from "../../graphql/updateUser.graphql";
@@ -15,6 +16,9 @@ import { getHeader } from "../../utils/helpers";
 import { DashboardViewIndex } from "../../enums/enums";
 import MyOrganizations from "../../components/dashboard/MyOrganizations";
 import { useTranslation } from "react-i18next";
+import { useMyContext } from "../../contexts/UserContext";
+import { RequestSignModal } from "../../components/modal/RequestSign.modal";
+import { GET_NONCE } from "../../graphql/getNonce";
 
 const Dashboard = () => {
   const router = useRouter();
@@ -23,6 +27,8 @@ const Dashboard = () => {
   const { isConnected, isDisconnected, address } = useAccount();
   const { openConnectModal, connectModalOpen } = useConnectModal();
   const { id } = router.query;
+  const { signed, setSigned } = useMyContext();
+  const [notCreated, setNotCreated] = useState<boolean>(false);
   const [signUp, { data, loading, error }] = useMutation(CREATE_USER);
   const [
     updateUser,
@@ -30,6 +36,11 @@ const Dashboard = () => {
   ] = useMutation(UPDATE_USER);
   const [login, { data: loginData, loading: loginLoading, error: loginError }] =
     useMutation(LOGIN);
+  const { data: nonceData, refetch } = useQuery(GET_NONCE, {
+    variables: {
+      address: address ?? "",
+    },
+  });
   const [dashboardViewIndex, setDashboardViewIndex] =
     useState<DashboardViewIndex>(DashboardViewIndex.ORGANIZATIONS);
   const [isRegistered, setIsRegistered] = useState<boolean>(false);
@@ -37,35 +48,67 @@ const Dashboard = () => {
   const [nickname, setNickname] = useState<string>("");
   const [orgId, setOrgdId] = useState<string>("");
   const [signUpStep, setSignUpStep] = useState<number>(0);
-
+  const [counter, setCounter] = useState(0);
   useEffect(() => {
-    if (isDisconnected && openConnectModal) {
-      openConnectModal();
-      return
+    setSigned(false);
+    if (!isConnected) {
+      if (openConnectModal) openConnectModal();
+    } else {
+      onLogin();
     }
-    onLogin();
-  }, [isConnected, isDisconnected, connectModalOpen]);
-  useEffect(() => {
-    if (!id || id === undefined) return;
-  }, [id]);
+  }, [isConnected]);
+
   const onLogin = async () => {
-    console.log('login');
-    
+    if (!isConnected) return;
     try {
+      const refetchedData = await refetch();
+      const nonce = refetchedData?.data?.requestNonce;
+      if (!nonce) {
+        return;
+      }
+      await onSignMessage(nonce);
+    } catch (error: any) {
+      if (error?.message) {
+        const _error = JSON.parse(error.message);
+        if (_error.code === "err-002") {
+          setNotCreated(true);
+        }
+      }
+    }
+  };
+  const onSignMessage = async (msg: string) => {
+    try {
+      const signature: string = await signMessage({
+        message: msg,
+      });
+      console.log("signature is ", signature);
       const response = await login({
         variables: {
           loginInput: {
             address: address,
+            signature: signature,
+            nonce: msg,
           },
         },
       });
       setIsRegistered(true);
+      setSigned(true);
+      console.log(response.data.login.token);
       localStorage.setItem("token", response.data.login.token);
     } catch (error) {
-      console.error(error);
+      setCounter((prevCounter) => {
+        if (prevCounter >= 3) return prevCounter;
+        setTimeout(() => {
+          onSignMessage(msg);
+        }, 1000);
+        return prevCounter + 1;
+      });
+      return null;
     }
   };
   const createUser = async () => {
+    console.log('enter to createuser');
+    
     try {
       const response = await signUp({
         variables: {
@@ -112,10 +155,11 @@ const Dashboard = () => {
       });
     }
   };
+  if (!signed && !notCreated) {
+    return <RequestSignModal />;
+  }
   if (dashboardViewIndex === DashboardViewIndex.ORGANIZATIONS && id) {
-    return <KanbanComponent 
-      id={id as string}
-    />;
+    return <KanbanComponent id={id as string} />;
   }
   return isRegistered ? (
     <>

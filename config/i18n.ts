@@ -22,8 +22,8 @@ i18n
       escapeValue: false,
     },
     detection: {
-      order: ["localStorage", "navigator"], // primero intenta obtener el idioma de localStorage, luego del navegador
-      caches: ["localStorage"], // guarda el idioma seleccionado en localStorage
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"], 
     },
   });
 

@@ -239,9 +239,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   }, [i18n.language]);
 
   useEffect(() => {
-    console.log(localStorage.getItem("token"));
-    
-    console.log("userInfo", data);
 
     if (!data) return;
     setUserInformation(data.user);
