@@ -27,16 +27,24 @@ import {
   Image,
   Heading,
 } from "@chakra-ui/react";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { FiMenu, FiBell, FiChevronDown, FiChevronUp } from "react-icons/fi";
-import { FaClipboardList, FaEye } from "react-icons/fa";
-
+import { useAccount, useSignMessage } from "wagmi";
 import { IconType } from "react-icons";
+import { FaEye } from "react-icons/fa";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { Organization } from "../../types/organization.types";
+import { toast } from "react-toastify";
+import Cookie from "js-cookie";
 import Link from "next/link";
-import { useQuery } from "@apollo/client";
+
+import { Organization } from "../../types/organization.types";
 import { FETCH_ORGANIZATIONS } from "../../graphql/myOrganizations.graphql";
 import { GET_USER } from "../../graphql/getUserInfo";
+import { GET_NONCE } from "../../graphql/getNonce";
+import { LOGIN } from "../../graphql/login";
+import { RequestSignModal } from "../modal/RequestSign.modal";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { VERIFY_TOKEN } from "../../graphql/verifyToken";
 
 interface NavItemProps extends FlexProps {
   icon: IconType;
@@ -87,7 +95,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
   return (
     <Box
-      transition="3s ease"
       bg={bgColor1}
       borderRight="1px"
       borderRightColor={bgColor2}
@@ -137,7 +144,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             </Link>
           ))}
       </VStack>
-      <VStack align="start">
+      {/*<VStack align="start">
         <Flex align="center" justify="start" w={"100%"}>
           <NavItem icon={FaEye} linkTo={"dashboard"} ml={0}>
             <Heading
@@ -156,7 +163,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             onClick={() => setShowDisputes(!showDisputes)}
           />
         </Flex>
-        {showDisputes && (
+         {showDisputes && (
           // orgs.map((org) => (
           //   <Link href={`/dispute?id=${org.id}`} key={org.id}>
           //     <Box
@@ -172,34 +179,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           //     </Box>
           //   </Link>
           // ))
-          <>
-            <Link href={`/dispute?id=123`}>
-              <Box
-                ml={10}
-                _hover={{
-                  bg: "cyan.400",
-                  color: "white",
-                }}
-              >
-                {" "}
-                {"dispute 1"}
-              </Box>
-            </Link>
-            <Link href={`/dispute?id=123`}>
-              <Box
-                ml={10}
-                _hover={{
-                  bg: "cyan.400",
-                  color: "white",
-                }}
-              >
-                {" "}
-                {"dispute 2"}
-              </Box>
-            </Link>
-          </>
-        )}
-      </VStack>
+        )} 
+      </VStack>*/}
     </Box>
   );
 };
@@ -244,6 +225,8 @@ const NavItem = ({ icon, children, linkTo, ...rest }: NavItemProps) => {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { i18n } = useTranslation();
+  const { address } = useAccount();
+
   const [imageSrc, setImageSrc] = useState("/images/eng_flag.png");
   const { loading, error, data, refetch } = useQuery(GET_USER);
   const [userInformation, setUserInformation] = useState<any>(null);
@@ -260,6 +243,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   }, [i18n.language]);
 
   useEffect(() => {
+    console.log("data is ", data);
+
     if (!data) return;
     setUserInformation(data.user);
   }, [data]);
@@ -308,17 +293,26 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         Logo
       </Text>
 
-      {userInformation && (
-        <HStack spacing={{ base: "0", md: "6" }}>
-          <IconButton
-            size="lg"
-            variant="ghost"
-            aria-label="open menu"
-            icon={<FiBell />}
-          />
-          <Button onClick={toggleColorMode}>
-            {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-          </Button>
+      <HStack spacing={{ base: "0", md: "3" }} style={{ marginRight: 12 }}>
+        <Button onClick={toggleColorMode}>
+          {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+        </Button>
+        <Flex alignItems={"center"}>
+          <Menu>
+            <MenuButton as={Button}>
+              <Image
+                alt="Flag image"
+                src={imageSrc}
+                boxSize="30px" // Ajusta el tamaño según prefieras
+              />
+            </MenuButton>
+            <MenuList>
+              <MenuItem onClick={() => changeLanguage("en")}>English</MenuItem>
+              <MenuItem onClick={() => changeLanguage("es")}>Español</MenuItem>
+            </MenuList>
+          </Menu>
+        </Flex>
+        {address && (
           <Flex alignItems={"center"}>
             <Menu>
               <MenuButton
@@ -338,7 +332,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                       <Text fontSize="sm">{userInformation.nickname}</Text>
                     )}
                     <Text fontSize="xs" color="gray.600">
-                      {userInformation.roles[0]}
+                      {/* {userInformation.roles[0]} */}
+                      Sebas
                     </Text>
                   </VStack>
                   <Box display={{ base: "none", md: "flex" }}>
@@ -354,27 +349,9 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               </MenuList>
             </Menu>
           </Flex>
-          <Flex alignItems={"center"}>
-            <Menu>
-              <MenuButton as={Button}>
-                <Image
-                  alt="Flag image"
-                  src={imageSrc}
-                  boxSize="30px" // Ajusta el tamaño según prefieras
-                />
-              </MenuButton>
-              <MenuList>
-                <MenuItem onClick={() => changeLanguage("en")}>
-                  English
-                </MenuItem>
-                <MenuItem onClick={() => changeLanguage("es")}>
-                  Español
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
-        </HStack>
-      )}
+        )}
+      </HStack>
+      <ConnectButton />
     </Flex>
   );
 };
@@ -384,13 +361,103 @@ type LayoutProps = {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
+  const { address } = useAccount();
+  const { t } = useTranslation();
+
+  const {
+    data: nonceData,
+    refetch,
+    loading,
+  } = useQuery(GET_NONCE, {
+    variables: {
+      address: address ?? "",
+    },
+  });
+  const [
+    verifyToken,
+    { data: verifyData, loading: verifyLoading, error: verifyError },
+  ] = useLazyQuery(VERIFY_TOKEN);
+
+  const [login] = useMutation(LOGIN);
+
+  useEffect(() => {
+    console.log("reading wallet connected");
+    if (!address) return;
+    const jwt = Cookie.get("jwt");
+    console.log("jwt is", jwt);
+    if (!jwt || jwt === undefined) {
+      console.log("fetching nonce");
+      refetch();
+    } else {
+      //TODO: check if jwt is valid
+      console.log("jwt is valid");
+      verifyToken({
+        variables: {
+          token: jwt,
+        },
+      });
+    }
+  }, [address]);
+  useEffect(() => {
+    console.log("nonceData", nonceData);
+    console.log("nonceData", nonceData?.requestNonce);
+    const jwt = Cookie.get("jwt");
+    if (jwt) return;
+    if (!nonceData?.requestNonce || !address) return;
+    signMessage({ message: nonceData.requestNonce });
+  }, [nonceData]);
+  useEffect(() => {
+    console.log("verifyData call");
+    if (verifyData) {
+      console.log("Token verificado exitosamente");
+      console.log("verifyData", verifyData);
+    }
+    if (verifyError) {
+      console.error("Error al verificar el token:", verifyError);
+      console.log("verifyError", verifyError);
+      Cookie.remove("jwt");
+      window.location.reload();
+    }
+  }, [verifyData, verifyError]);
+  const { signMessage } = useSignMessage({
+    onSuccess(data) {
+      validateSignature(data);
+    },
+    onError(error) {
+      showerror(t("login.error.signature"));
+    },
+  });
+  const validateSignature = async (signature: string) => {
+    try {
+      const response = await login({
+        variables: {
+          loginInput: {
+            address,
+            signature,
+            nonce: nonceData?.requestNonce,
+          },
+        },
+      });
+      console.log("response", response.data);
+      if (!response.data.login.token) {
+        showerror();
+        return;
+      }
+      Cookie.set("jwt", response.data.login.token, { expires: 15 });
+    } catch (error) {
+      showerror();
+    }
+  };
+  const showerror = (msg: string | null = null) => {
+    toast.error(msg ?? t("login.error.validation"));
+  };
 
   if (router.pathname === "/") {
     return <>{children}</>;
   }
 
   return (
-    <Box minH="100vh" bg={"gray.500"}>
+    <Box minH="100vh">
       <SidebarContent
         onClose={() => onClose}
         display={{ base: "none", md: "block" }}
@@ -407,7 +474,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
         {children}

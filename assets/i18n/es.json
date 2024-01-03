@@ -13,7 +13,7 @@
     "sign_message" : "Firma el mensaje con tu billetera para verificar tu identidad"
   },
   "sidebar": {
-    "myOrganizations": "Organizaciones",
+    "myOrganizations": "Mis Orgs",
     "my_task_board" : "Mis tareas",
     "inbox" : "Bandeja de entrada",
     "bookmarks" : "Marcadores",
@@ -76,6 +76,12 @@
     },
     "detailTask" : {
       "activity": "Actividad"
+    }
+  },
+  "login" : {
+    "error" : {
+      "validation" : "Error validando usuario, por favor intente de nuevo",
+      "signature" : "Error firmando mensaje, por favor intente de nuevo"
     }
   }
 }

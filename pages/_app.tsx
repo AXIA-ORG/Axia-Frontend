@@ -1,7 +1,7 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import type { AppProps } from "next/app";
-import { configureChains, createConfig, sepolia, WagmiConfig } from "wagmi";
+import { configureChains, createConfig, sepolia, useAccount, WagmiConfig } from "wagmi";
 import { ApolloProvider } from "@apollo/client";
 import { goerli, polygonMumbai } from "wagmi/chains";
 import { DndProvider } from "react-dnd";
@@ -16,6 +16,7 @@ import { I18nextProvider } from "react-i18next";
 import i18n from "../config/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MyContextProvider } from "../contexts/UserContext";
+import 'react-toastify/dist/ReactToastify.css';
 
 const queryClient = new QueryClient();
 

@@ -152,6 +152,7 @@ const CreateOrganizationModal: React.FC<CreateOrganizationModalProps> = ({
               {t("myOrganizations.create_organization.name")}
             </FormLabel>
             <Input
+              maxLength={50}
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}

@@ -13,7 +13,7 @@
     "sign_message" : "Sign message with wallet to verify your identity"
   },
   "sidebar": {
-    "myOrganizations": "Organizations",
+    "myOrganizations": "My Orgs",
     "my_task_board" : "My Tasks",
     "inbox" : "Inbox",
     "bookmarks" : "Bookmarks",
@@ -76,6 +76,12 @@
     },
     "detailTask" : {
       "activity": "Activity"
+    }
+  },
+  "login" : {
+    "error" : {
+      "validation" : "Error validating user, please try again",
+      "signature" : "Error signing message, please try again"
     }
   }
 }

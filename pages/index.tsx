@@ -28,17 +28,16 @@ const Home: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Axia</title>
+        <meta
+          content="Web3 representation and meritocracy"
+          name="description"
+        />
+        <link href="/favicon.ico" rel="icon" />
+      </Head>
       <Nav />
       <div className={styles.container}>
-        <Head>
-          <title>Axia</title>
-          <meta
-            content="Web3 representation and meritocracy"
-            name="description"
-          />
-          <link href="/favicon.ico" rel="icon" />
-        </Head>
-
         <main className={styles.main}>
           <Hero />
           <Img

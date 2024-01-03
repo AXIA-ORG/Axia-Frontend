@@ -95,7 +95,7 @@ export default function Nav() {
                   }}
                   onClick={() => router.push("/dashboard")}
                 >
-                  Connect
+                  Launch dApp
                 </Button>
                 {loaded && (
                   <MenuButton
