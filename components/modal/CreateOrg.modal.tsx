@@ -167,6 +167,7 @@ const CreateOrganizationModal: React.FC<CreateOrganizationModalProps> = ({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={loading}
+              maxLength={250}
             />
           </FormControl>
           <FormControl mb={4} alignItems="center" justifyContent="center">

@@ -225,7 +225,7 @@ const NavItem = ({ icon, children, linkTo, ...rest }: NavItemProps) => {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { i18n } = useTranslation();
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
 
   const [imageSrc, setImageSrc] = useState("/images/eng_flag.png");
   const { loading, error, data, refetch } = useQuery(GET_USER);
@@ -243,8 +243,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   }, [i18n.language]);
 
   useEffect(() => {
-    console.log("data is ", data);
-
     if (!data) return;
     setUserInformation(data.user);
   }, [data]);
@@ -294,6 +292,46 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </Text>
 
       <HStack spacing={{ base: "0", md: "3" }} style={{ marginRight: 12 }}>
+        {!isConnected &&<ConnectButton chainStatus="none" accountStatus="avatar" />}
+        {address && (
+          <Flex alignItems={"center"}>
+            <Menu>
+              <MenuButton
+                py={2}
+                transition="all 0.3s"
+                _focus={{ boxShadow: "none" }}
+              >
+                <HStack>
+                  <Avatar size={"sm"} src={"images/standarAvatar.png"} />
+                  <VStack
+                    display={{ base: "none", md: "flex" }}
+                    alignItems="flex-start"
+                    spacing="1px"
+                    ml="2"
+                  >
+                    {userInformation && (
+                      <Text fontSize="sm" isTruncated maxWidth={100}>
+                        {userInformation.nickname}
+                      </Text>
+                    )}
+                    <Text fontSize="xs" color="gray.600">
+                      Sebas
+                    </Text>
+                  </VStack>
+                  <Box display={{ base: "none", md: "flex" }}>
+                    <FiChevronDown />
+                  </Box>
+                </HStack>
+              </MenuButton>
+              <MenuList bg={bgColor1} borderColor={bgColor2}>
+                <MenuItem>Profile</MenuItem>
+                <MenuItem>Settings</MenuItem>
+                <MenuDivider />
+                <MenuItem>Sign out</MenuItem>
+              </MenuList>
+            </Menu>
+          </Flex>
+        )}
         <Button onClick={toggleColorMode}>
           {colorMode === "light" ? <MoonIcon /> : <SunIcon />}
         </Button>
@@ -312,46 +350,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             </MenuList>
           </Menu>
         </Flex>
-        {address && (
-          <Flex alignItems={"center"}>
-            <Menu>
-              <MenuButton
-                py={2}
-                transition="all 0.3s"
-                _focus={{ boxShadow: "none" }}
-              >
-                <HStack>
-                  <Avatar size={"sm"} src={"images/standarAvatar.png"} />
-                  <VStack
-                    display={{ base: "none", md: "flex" }}
-                    alignItems="flex-start"
-                    spacing="1px"
-                    ml="2"
-                  >
-                    {userInformation && (
-                      <Text fontSize="sm">{userInformation.nickname}</Text>
-                    )}
-                    <Text fontSize="xs" color="gray.600">
-                      {/* {userInformation.roles[0]} */}
-                      Sebas
-                    </Text>
-                  </VStack>
-                  <Box display={{ base: "none", md: "flex" }}>
-                    <FiChevronDown />
-                  </Box>
-                </HStack>
-              </MenuButton>
-              <MenuList bg={bgColor1} borderColor={bgColor2}>
-                <MenuItem>Profile</MenuItem>
-                <MenuItem>Settings</MenuItem>
-                <MenuDivider />
-                <MenuItem>Sign out</MenuItem>
-              </MenuList>
-            </Menu>
-          </Flex>
-        )}
       </HStack>
-      <ConnectButton />
     </Flex>
   );
 };
@@ -364,11 +363,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { address } = useAccount();
   const { t } = useTranslation();
 
-  const {
-    data: nonceData,
-    refetch,
-    loading,
-  } = useQuery(GET_NONCE, {
+  const [getNonce, { data: nonceData, loading }] = useLazyQuery(GET_NONCE, {
     variables: {
       address: address ?? "",
     },
@@ -381,16 +376,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [login] = useMutation(LOGIN);
 
   useEffect(() => {
-    console.log("reading wallet connected");
     if (!address) return;
     const jwt = Cookie.get("jwt");
-    console.log("jwt is", jwt);
     if (!jwt || jwt === undefined) {
-      console.log("fetching nonce");
-      refetch();
+      getNonce();
     } else {
-      //TODO: check if jwt is valid
-      console.log("jwt is valid");
       verifyToken({
         variables: {
           token: jwt,
@@ -399,15 +389,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     }
   }, [address]);
   useEffect(() => {
-    console.log("nonceData", nonceData);
-    console.log("nonceData", nonceData?.requestNonce);
     const jwt = Cookie.get("jwt");
     if (jwt) return;
     if (!nonceData?.requestNonce || !address) return;
     signMessage({ message: nonceData.requestNonce });
   }, [nonceData]);
   useEffect(() => {
-    console.log("verifyData call");
     if (verifyData) {
       console.log("Token verificado exitosamente");
       console.log("verifyData", verifyData);
@@ -438,7 +425,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           },
         },
       });
-      console.log("response", response.data);
       if (!response.data.login.token) {
         showerror();
         return;
